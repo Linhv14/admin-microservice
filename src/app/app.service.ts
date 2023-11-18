@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { ServiceRepository } from './service.repository';
-import { CreateServiceDTO, DeleteServiceDTO, UpdateServiceDTO } from 'src/shared/service.dto';
+import { UpdateServiceDTO } from 'src/shared/service.dto';
 import { type Prisma } from '@prisma/client';
 @Injectable()
 export class AppService {
@@ -14,10 +14,10 @@ export class AppService {
     return await this.serviceRepository.findAll()
   }
 
-  async createService(serviceDTO: CreateServiceDTO) {
-    const isExistedService = await this._isExistedByUnique({ name: serviceDTO.name })
+  async createService(name: string) {
+    const isExistedService = await this._isExistedField({ name })
     if (isExistedService) return { error: "Service is already exists!" }
-    return await this.serviceRepository.create(serviceDTO)
+    return await this.serviceRepository.create({ name })
   }
 
   async updateService(serviceDTO: UpdateServiceDTO) {
@@ -29,9 +29,8 @@ export class AppService {
     return await this.serviceRepository.update({ ID }, { name })
   }
 
-  async deleteService(serviceDTO: DeleteServiceDTO) {
-    console.log(typeof serviceDTO.ID)
-    return await this.serviceRepository.delete({ ID: serviceDTO.ID })
+  async deleteService(ID: number) {
+    return await this.serviceRepository.delete({ ID })
   }
 
   private async _isExistedByUnique(field: Prisma.ServiceWhereUniqueInput) {
