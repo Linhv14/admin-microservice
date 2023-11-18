@@ -24,7 +24,7 @@ export class AppService {
     const { ID, name } = serviceDTO
     const isExistedServiceID = await this._isExistedByUnique({ ID })
     if (!isExistedServiceID) return { error: "Service not found" }
-    const isExistedServiceName = await this._isExistedByUnique({ name })
+    const isExistedServiceName = await this._isExistedField({ name })
     if (isExistedServiceName) return { error: "Service is already exists!" }
     return await this.serviceRepository.update({ ID }, { name })
   }
@@ -36,5 +36,9 @@ export class AppService {
 
   private async _isExistedByUnique(field: Prisma.ServiceWhereUniqueInput) {
     return await this.serviceRepository.findUnique(field)
+  }
+
+  private async _isExistedField(field: Prisma.ServiceWhereInput) {
+    return await this.serviceRepository.findFirst(field)
   }
 }
