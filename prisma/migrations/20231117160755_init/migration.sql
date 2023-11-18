@@ -44,15 +44,6 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "UsersHasServices" (
-    "serviceID" INTEGER NOT NULL,
-    "userID" INTEGER NOT NULL,
-    "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "UsersHasServices_pkey" PRIMARY KEY ("userID","serviceID")
-);
-
--- CreateTable
 CREATE TABLE "Order" (
     "ID" SERIAL NOT NULL,
     "address" TEXT NOT NULL,
@@ -63,15 +54,6 @@ CREATE TABLE "Order" (
     "updateAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("ID")
-);
-
--- CreateTable
-CREATE TABLE "OrderHasUsers" (
-    "orderID" INTEGER NOT NULL,
-    "userID" INTEGER NOT NULL,
-    "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "OrderHasUsers_pkey" PRIMARY KEY ("orderID","userID")
 );
 
 -- CreateTable
@@ -101,6 +83,21 @@ CREATE TABLE "Review" (
     CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "_ServiceToUser" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_OrderToUser" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Service_name_key" ON "Service"("name");
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -122,20 +119,20 @@ CREATE UNIQUE INDEX "Review_userID_key" ON "Review"("userID");
 -- CreateIndex
 CREATE UNIQUE INDEX "Review_orderID_key" ON "Review"("orderID");
 
--- AddForeignKey
-ALTER TABLE "UsersHasServices" ADD CONSTRAINT "UsersHasServices_serviceID_fkey" FOREIGN KEY ("serviceID") REFERENCES "Service"("ID") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- CreateIndex
+CREATE UNIQUE INDEX "_ServiceToUser_AB_unique" ON "_ServiceToUser"("A", "B");
 
--- AddForeignKey
-ALTER TABLE "UsersHasServices" ADD CONSTRAINT "UsersHasServices_userID_fkey" FOREIGN KEY ("userID") REFERENCES "User"("ID") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- CreateIndex
+CREATE INDEX "_ServiceToUser_B_index" ON "_ServiceToUser"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_OrderToUser_AB_unique" ON "_OrderToUser"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_OrderToUser_B_index" ON "_OrderToUser"("B");
 
 -- AddForeignKey
 ALTER TABLE "Order" ADD CONSTRAINT "Order_serviceID_fkey" FOREIGN KEY ("serviceID") REFERENCES "Service"("ID") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "OrderHasUsers" ADD CONSTRAINT "OrderHasUsers_orderID_fkey" FOREIGN KEY ("orderID") REFERENCES "Order"("ID") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "OrderHasUsers" ADD CONSTRAINT "OrderHasUsers_userID_fkey" FOREIGN KEY ("userID") REFERENCES "User"("ID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Post" ADD CONSTRAINT "Post_userID_fkey" FOREIGN KEY ("userID") REFERENCES "User"("ID") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -148,3 +145,15 @@ ALTER TABLE "Review" ADD CONSTRAINT "Review_userID_fkey" FOREIGN KEY ("userID") 
 
 -- AddForeignKey
 ALTER TABLE "Review" ADD CONSTRAINT "Review_orderID_fkey" FOREIGN KEY ("orderID") REFERENCES "Order"("ID") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ServiceToUser" ADD CONSTRAINT "_ServiceToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Service"("ID") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ServiceToUser" ADD CONSTRAINT "_ServiceToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("ID") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_OrderToUser" ADD CONSTRAINT "_OrderToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Order"("ID") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_OrderToUser" ADD CONSTRAINT "_OrderToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("ID") ON DELETE CASCADE ON UPDATE CASCADE;
