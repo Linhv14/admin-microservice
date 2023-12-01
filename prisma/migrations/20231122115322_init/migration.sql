@@ -58,7 +58,7 @@ CREATE TABLE "Order" (
 
 -- CreateTable
 CREATE TABLE "Post" (
-    "id" SERIAL NOT NULL,
+    "ID" SERIAL NOT NULL,
     "userID" INTEGER NOT NULL,
     "address" TEXT,
     "long" DOUBLE PRECISION,
@@ -68,19 +68,20 @@ CREATE TABLE "Post" (
     "creatAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updateAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Post_pkey" PRIMARY KEY ("ID")
 );
 
 -- CreateTable
 CREATE TABLE "Review" (
-    "id" SERIAL NOT NULL,
+    "ID" SERIAL NOT NULL,
     "userID" INTEGER NOT NULL,
     "orderID" INTEGER NOT NULL,
     "content" TEXT NOT NULL,
+    "star" DOUBLE PRECISION NOT NULL,
     "creatAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updateAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Review_pkey" PRIMARY KEY ("ID")
 );
 
 -- CreateTable
@@ -96,9 +97,6 @@ CREATE TABLE "_OrderToUser" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Service_name_key" ON "Service"("name");
-
--- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
@@ -106,12 +104,6 @@ CREATE UNIQUE INDEX "User_phoneNumber_key" ON "User"("phoneNumber");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Order_serviceID_key" ON "Order"("serviceID");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Post_userID_key" ON "Post"("userID");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Post_serviceID_key" ON "Post"("serviceID");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Review_userID_key" ON "Review"("userID");
